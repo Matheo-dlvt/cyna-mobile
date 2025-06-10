@@ -34,7 +34,7 @@ const RegisterScreen: React.FC = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ firstName, lastName, email, password, confirmPassword}),
       });
-
+      console.log(JSON.stringify({ firstName, lastName, email, password, confirmPassword}));
       if (!response.ok) throw new Error("Erreur lors de l'inscription.");
       const data = await response.json();
 

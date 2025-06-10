@@ -7,6 +7,7 @@ import SubscriptionsStackNavigator from "./StackNavigator/SubscriptionStackNavig
 import SettingsStackNavigator from "./StackNavigator/SettingsStackNavigator";
 import CartStackNavigator from "./StackNavigator/CartStackNavigator";
 import { Routes } from "./Routes";
+import { LinearGradient } from "expo-linear-gradient";
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
@@ -28,8 +29,16 @@ const TabNavigator = () => {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "hsl(263.4 70% 50.4%)",
+        tabBarActiveTintColor: "white",
         tabBarInactiveTintColor: "gray",
+        tabBarBackground: () => (
+          <LinearGradient
+            colors={["hsl(251, 60%, 16%)", "hsl(263, 69%, 49%)"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={{ flex: 1 }}
+          />
+        ),
         headerShown: false,
       })}
     >

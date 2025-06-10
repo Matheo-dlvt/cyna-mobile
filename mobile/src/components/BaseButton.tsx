@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   primary: {
-    backgroundColor: "#3b82f6",
+    backgroundColor: "hsl(264, 70%, 50%)",
   },
   secondary: {
     backgroundColor: "#555",
