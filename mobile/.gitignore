@@ -8,6 +8,7 @@ node_modules/
 dist/
 web-build/
 expo-env.d.ts
+.expo-shared/
 
 # Native
 .kotlin/
@@ -20,6 +21,7 @@ expo-env.d.ts
 
 # Metro
 .metro-health-check*
+metro-cache/
 
 # debug
 npm-debug.*
@@ -35,3 +37,15 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# Xcode build artifacts
+ios/Pods/
+ios/Podfile.lock
+ios/build/
+ios/*.xcworkspace
+
+# Android build artifacts
+android/.gradle/
+android/app/build/
+android/.idea/
+android/local.properties

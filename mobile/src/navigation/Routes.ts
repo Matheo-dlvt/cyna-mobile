@@ -11,16 +11,18 @@ export const SubscriptionsScreen = "SubscriptionsScreen";
 export const SettingsScreen = "SettingsScreen";
 export const CartScreen = "CartScreen";
 export const OrderAddressSelectionScreen = "OrderAddressSelectionScreen";
+export const CheckoutScreen = "CheckoutScreen";
 
 export const Routes = {
-    HomeTab,
-    SubscriptionsTab,
-    SettingsTab,
-    CartTab,
-    HomeScreen,
-    ProductScreen,
-    SubscriptionsScreen,
-    SettingsScreen,
-    CartScreen,
-    OrderAddressSelectionScreen
+  HomeTab,
+  SubscriptionsTab,
+  SettingsTab,
+  CartTab,
+  HomeScreen,
+  ProductScreen,
+  SubscriptionsScreen,
+  SettingsScreen,
+  CartScreen,
+  OrderAddressSelectionScreen,
+  CheckoutScreen,
 };

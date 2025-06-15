@@ -8,10 +8,11 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Dimensions,
+  Platform,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 
 interface CartItem {
   id: number;
@@ -26,9 +27,11 @@ interface CartItem {
 }
 
 const CartScreen: React.FC = () => {
+  const isFocused = useIsFocused();
   const navigation = useNavigation();
   const [items, setItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [cartId, setCartId] = useState(0);
 
   const fetchCart = async () => {
     setLoading(true);
@@ -39,6 +42,7 @@ const CartScreen: React.FC = () => {
       },
     });
     const data = await response.json();
+    setCartId(data.id);
     setItems(data.items);
     setLoading(false);
   };
@@ -52,10 +56,13 @@ const CartScreen: React.FC = () => {
     const access = await AsyncStorage.getItem("access");
 
     if (quantity <= 0) {
-      await fetch(`http://127.0.0.1:8000/api/orders/delete-cart-item/${itemId}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${access}` },
-      });
+      await fetch(
+        `http://127.0.0.1:8000/api/orders/delete-cart-item/${itemId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${access}` },
+        }
+      );
     } else {
       await fetch("http://127.0.0.1:8000/api/orders/update-cart-item", {
         method: "PUT",
@@ -63,7 +70,7 @@ const CartScreen: React.FC = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${access}`,
         },
-        body: JSON.stringify({ productId, quantity, recurring }),
+        body: JSON.stringify({ id: itemId, productId, quantity, recurring }),
       });
     }
 
@@ -71,19 +78,28 @@ const CartScreen: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchCart();
-  }, []);
+    if (isFocused) fetchCart();
+  }, [isFocused]);
 
-  const total = items.reduce((acc, item) => acc + (item.product.price * item.quantity) / 100, 0);
+  const total = items.reduce(
+    (acc, item) => acc + (item.product.price * item.quantity) / 100,
+    0
+  );
 
   if (loading) return <ActivityIndicator style={{ flex: 1 }} color="#814DFF" />;
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 200 }}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{ paddingBottom: 200 }}
+      >
         {items.map((item) => (
           <View key={item.id} style={styles.card}>
-            <Image source={{ uri: item.product.slides[0] }} style={styles.image} />
+            <Image
+              source={{ uri: item.product.slides[0] }}
+              style={styles.image}
+            />
             <View style={styles.info}>
               <Text style={styles.name}>{item.product.name}</Text>
               <Text style={styles.price}>
@@ -98,9 +114,15 @@ const CartScreen: React.FC = () => {
                 <Picker
                   selectedValue={item.recurring}
                   onValueChange={(value) =>
-                    updateQuantityOrRecurring(item.product.id, item.quantity, value, item.id)
+                    updateQuantityOrRecurring(
+                      item.product.id,
+                      item.quantity,
+                      value,
+                      item.id
+                    )
                   }
                   style={styles.picker}
+                  itemStyle={styles.item}
                   dropdownIconColor="#fff"
                 >
                   <Picker.Item label="Mensuel" value={1} />
@@ -111,16 +133,31 @@ const CartScreen: React.FC = () => {
               <View style={styles.quantityRow}>
                 <TouchableOpacity
                   onPress={() =>
-                    updateQuantityOrRecurring(item.product.id, item.quantity - 1, item.recurring, item.id)
+                    updateQuantityOrRecurring(
+                      item.product.id,
+                      item.quantity - 1,
+                      item.recurring,
+                      item.id
+                    )
                   }
-                  style={[styles.qtyButton, item.quantity === 1 && styles.deleteButton]}
+                  style={[
+                    styles.qtyButton,
+                    item.quantity === 1 && styles.deleteButton,
+                  ]}
                 >
-                  <Text style={styles.qtyText}>{item.quantity === 1 ? "🗑️" : "-"}</Text>
+                  <Text style={styles.qtyText}>
+                    {item.quantity === 1 ? "🗑️" : "-"}
+                  </Text>
                 </TouchableOpacity>
                 <Text style={styles.qtyValue}>{item.quantity}</Text>
                 <TouchableOpacity
                   onPress={() =>
-                    updateQuantityOrRecurring(item.product.id, item.quantity + 1, item.recurring, item.id)
+                    updateQuantityOrRecurring(
+                      item.product.id,
+                      item.quantity + 1,
+                      item.recurring,
+                      item.id
+                    )
                   }
                   style={styles.qtyButton}
                 >
@@ -152,11 +189,14 @@ const CartScreen: React.FC = () => {
 
         <TouchableOpacity
           style={styles.checkoutButton}
-          onPress={() => navigation.navigate("OrderAddressSelectionScreen" as never)}
+          onPress={() =>
+            navigation.navigate("OrderAddressSelectionScreen" as never, {
+              cartId,
+            })
+          }
         >
           <Text style={styles.checkoutText}>Passer la commande</Text>
         </TouchableOpacity>
-
       </View>
     </View>
   );
@@ -225,18 +265,31 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   pickerWrapper: {
-    marginTop: 5,
-    borderWidth: 0,
-    borderRadius: 5,
-    backgroundColor: "hsl(221, 80%, 4%)",
-    marginBottom: 12,
+    // marginTop: 5,
+    // borderWidth: 0,
+    // borderRadius: 5,
+    // backgroundColor: "hsl(221, 80%, 4%)",
+    // marginBottom: 12,
   },
   picker: {
-    height: 20,
+    // height: 20,
+    // color: "#fff",
+    // borderWidth: 0,
+    // borderRadius: 3,
+    // backgroundColor: "hsl(221, 80%, 4%)",
+    width: "100%",
+    height: Platform.select({
+      ios: 70,
+      android: 50,
+    }),
     color: "#fff",
-    borderWidth: 0,
-    borderRadius: 3,
-    backgroundColor: "hsl(221, 80%, 4%)",
+  },
+  item: {
+    color: "#fff",
+    height: Platform.select({
+      ios: 70,
+      android: undefined,
+    }),
   },
   footer: {
     position: "absolute",

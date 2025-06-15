@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Alert,
+  Platform,
 } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -41,12 +42,12 @@ const ProductScreen: React.FC = () => {
 
   useEffect(() => {
     fetch(`http://127.0.0.1:8000/api/products/get/${productId}`)
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         setProduct(data);
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Erreur produit :", err);
         setLoading(false);
       });
@@ -56,18 +57,21 @@ const ProductScreen: React.FC = () => {
     try {
       const access = await AsyncStorage.getItem("access");
 
-      const response = await fetch("http://127.0.0.1:8000/api/orders/add-product", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${access}`,
-        },
-        body: JSON.stringify({
-          productId: productId,
-          quantity: quantity,
-          recurring: recurring,
-        }),
-      });
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/orders/add-product",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access}`,
+          },
+          body: JSON.stringify({
+            productId: productId,
+            quantity: quantity,
+            recurring: recurring,
+          }),
+        }
+      );
 
       if (!response.ok) throw new Error("Erreur lors de l'ajout au panier");
       Alert.alert("Succès", "Produit ajouté au panier !");
@@ -77,7 +81,9 @@ const ProductScreen: React.FC = () => {
   };
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#3b82f6" style={{ flex: 1 }} />;
+    return (
+      <ActivityIndicator size="large" color="#3b82f6" style={{ flex: 1 }} />
+    );
   }
 
   if (!product) {
@@ -88,7 +94,7 @@ const ProductScreen: React.FC = () => {
     );
   }
 
-  const frDetails = product.details.find(d => d.locale === "fr");
+  const frDetails = product.details.find((d) => d.locale === "fr");
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -120,6 +126,7 @@ const ProductScreen: React.FC = () => {
             selectedValue={recurring}
             onValueChange={(value) => setRecurring(value)}
             style={styles.picker}
+            itemStyle={styles.item}
             dropdownIconColor="#fff"
           >
             <Picker.Item label="Mensuel" value={1} />
@@ -127,14 +134,22 @@ const ProductScreen: React.FC = () => {
           </Picker>
         </View>
 
-        <View style={{ flexDirection: "row", alignItems: "center", marginVertical: 12 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginVertical: 12,
+          }}
+        >
           <TouchableOpacity
             style={{ backgroundColor: "#814DFF", padding: 8, borderRadius: 8 }}
             onPress={() => setQuantity(Math.max(1, quantity - 1))}
           >
             <Text style={{ color: "#fff", fontWeight: "bold" }}>-</Text>
           </TouchableOpacity>
-          <Text style={{ color: "#fff", marginHorizontal: 12 }}>{quantity}</Text>
+          <Text style={{ color: "#fff", marginHorizontal: 12 }}>
+            {quantity}
+          </Text>
           <TouchableOpacity
             style={{ backgroundColor: "#814DFF", padding: 8, borderRadius: 8 }}
             onPress={() => setQuantity(quantity + 1)}
@@ -143,8 +158,15 @@ const ProductScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={handleAddToCart} style={{ backgroundColor: "#A954FF", padding: 12, borderRadius: 10 }}>
-          <Text style={{ color: "#fff", textAlign: "center", fontWeight: "bold" }}>Ajouter au panier</Text>
+        <TouchableOpacity
+          onPress={handleAddToCart}
+          style={{ backgroundColor: "#A954FF", padding: 12, borderRadius: 10 }}
+        >
+          <Text
+            style={{ color: "#fff", textAlign: "center", fontWeight: "bold" }}
+          >
+            Ajouter au panier
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -210,19 +232,30 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   pickerWrapper: {
-    borderWidth: 0,
-    borderRadius: 5,
-    backgroundColor: "hsl(257, 69%, 10%)",
-    marginBottom: 12,
+    // borderWidth: 0,
+    // borderRadius: 5,
+    // backgroundColor: "hsl(257, 69%, 10%)",
   },
   picker: {
-    height: 30,
+    // height: 50,
+    // color: "#fff",
+    // borderWidth: 0,
+    // borderRadius: 3,
+    // backgroundColor: "hsl(257, 69%, 10%)",
+    width: "100%",
+    height: Platform.select({
+      ios: 70,
+      android: 50,
+    }),
     color: "#fff",
-    borderWidth: 0,
-    borderRadius: 3,
-    backgroundColor: "hsl(257, 69%, 10%)",
   },
-
+  item: {
+    color: "#fff",
+    height: Platform.select({
+      ios: 70,
+      android: undefined,
+    }),
+  },
 });
 
 export default ProductScreen;
