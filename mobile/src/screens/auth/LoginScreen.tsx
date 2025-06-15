@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BaseInput from "../../components/BaseInput";
@@ -6,12 +6,16 @@ import BaseButton from "../../components/BaseButton";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AuthStackParamList } from "../../navigation/types";
+import { AuthContext } from "../../context/AuthContext";
 
 const LoginScreen: React.FC = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const { login } = useContext(AuthContext);
 
   const handleLogin = async () => {
     setErrorMessage(null);
@@ -22,13 +26,16 @@ const LoginScreen: React.FC = () => {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/auth/login/mobile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/auth/login/mobile",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -37,11 +44,7 @@ const LoginScreen: React.FC = () => {
 
       const data = await response.json();
 
-      await AsyncStorage.setItem("access", data.access);
-      await AsyncStorage.setItem("refresh", data.refresh);
-
-      navigation.navigate("App")
-
+      await login(data.access, data.refresh);
     } catch (error: any) {
       setErrorMessage(error.message);
     }

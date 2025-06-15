@@ -1,7 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStackParamList } from "../../navigation/types";
+import { Picker } from "@react-native-picker/picker";
 
 type ProductScreenRouteProp = RouteProp<RootStackParamList, "ProductScreen">;
 
@@ -25,6 +36,8 @@ const ProductScreen: React.FC = () => {
 
   const [product, setProduct] = useState<ProductDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [quantity, setQuantity] = useState(1);
+  const [recurring, setRecurring] = useState(1); // 1 = monthly, 2 = yearly
 
   useEffect(() => {
     fetch(`http://127.0.0.1:8000/api/products/get/${productId}`)
@@ -38,6 +51,30 @@ const ProductScreen: React.FC = () => {
         setLoading(false);
       });
   }, [productId]);
+
+  const handleAddToCart = async () => {
+    try {
+      const access = await AsyncStorage.getItem("access");
+
+      const response = await fetch("http://127.0.0.1:8000/api/orders/add-product", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access}`,
+        },
+        body: JSON.stringify({
+          productId: productId,
+          quantity: quantity,
+          recurring: recurring,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Erreur lors de l'ajout au panier");
+      Alert.alert("Succès", "Produit ajouté au panier !");
+    } catch (err: any) {
+      Alert.alert("Erreur", err.message || "Une erreur s’est produite");
+    }
+  };
 
   if (loading) {
     return <ActivityIndicator size="large" color="#3b82f6" style={{ flex: 1 }} />;
@@ -75,6 +112,41 @@ const ProductScreen: React.FC = () => {
           ))}
         </>
       )}
+
+      <View style={{ marginTop: 20 }}>
+        <Text style={styles.label}>Type de paiement</Text>
+        <View style={styles.pickerWrapper}>
+          <Picker
+            selectedValue={recurring}
+            onValueChange={(value) => setRecurring(value)}
+            style={styles.picker}
+            dropdownIconColor="#fff"
+          >
+            <Picker.Item label="Mensuel" value={1} />
+            <Picker.Item label="Annuel" value={2} />
+          </Picker>
+        </View>
+
+        <View style={{ flexDirection: "row", alignItems: "center", marginVertical: 12 }}>
+          <TouchableOpacity
+            style={{ backgroundColor: "#814DFF", padding: 8, borderRadius: 8 }}
+            onPress={() => setQuantity(Math.max(1, quantity - 1))}
+          >
+            <Text style={{ color: "#fff", fontWeight: "bold" }}>-</Text>
+          </TouchableOpacity>
+          <Text style={{ color: "#fff", marginHorizontal: 12 }}>{quantity}</Text>
+          <TouchableOpacity
+            style={{ backgroundColor: "#814DFF", padding: 8, borderRadius: 8 }}
+            onPress={() => setQuantity(quantity + 1)}
+          >
+            <Text style={{ color: "#fff", fontWeight: "bold" }}>+</Text>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity onPress={handleAddToCart} style={{ backgroundColor: "#A954FF", padding: 12, borderRadius: 10 }}>
+          <Text style={{ color: "#fff", textAlign: "center", fontWeight: "bold" }}>Ajouter au panier</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };
@@ -131,6 +203,26 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 40,
   },
+  label: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  pickerWrapper: {
+    borderWidth: 0,
+    borderRadius: 5,
+    backgroundColor: "hsl(257, 69%, 10%)",
+    marginBottom: 12,
+  },
+  picker: {
+    height: 30,
+    color: "#fff",
+    borderWidth: 0,
+    borderRadius: 3,
+    backgroundColor: "hsl(257, 69%, 10%)",
+  },
+
 });
 
 export default ProductScreen;
