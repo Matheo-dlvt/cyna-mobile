@@ -10,6 +10,7 @@ export const ProductScreen = "ProductScreen";
 export const SubscriptionsScreen = "SubscriptionsScreen";
 export const SettingsScreen = "SettingsScreen";
 export const CartScreen = "CartScreen";
+export const OrderAddressSelectionScreen = "OrderAddressSelectionScreen";
 
 export const Routes = {
     HomeTab,
@@ -20,5 +21,6 @@ export const Routes = {
     ProductScreen,
     SubscriptionsScreen,
     SettingsScreen,
-    CartScreen
+    CartScreen,
+    OrderAddressSelectionScreen
 };

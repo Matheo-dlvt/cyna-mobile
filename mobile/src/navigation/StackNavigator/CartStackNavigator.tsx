@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import CartScreen from "../../screens/cart/CartScreen";
+import OrderAddressSelectionScreen from "../../screens/cart/OrderAddressSelectionScreen"
 import { Routes } from "../Routes";
 import { LinearGradient } from "expo-linear-gradient";
 const Stack = createNativeStackNavigator();
@@ -27,6 +28,11 @@ export default function HomeStackNavigator() {
         name={Routes.CartScreen}
         component={CartScreen}
         options={{ headerShown: true, title: "Panier" }}
+      />
+      <Stack.Screen
+        name={Routes.OrderAddressSelectionScreen}
+        component={OrderAddressSelectionScreen}
+        options={{ headerShown: true, title: "Adresses" }}
       />
     </Stack.Navigator>
   );

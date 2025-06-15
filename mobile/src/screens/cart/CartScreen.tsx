@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
+import { useNavigation } from "@react-navigation/native";
 
 interface CartItem {
   id: number;
@@ -25,6 +26,7 @@ interface CartItem {
 }
 
 const CartScreen: React.FC = () => {
+  const navigation = useNavigation();
   const [items, setItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -148,9 +150,13 @@ const CartScreen: React.FC = () => {
           <Text style={styles.breakdownText}>0 €</Text>
         </View>
 
-        <TouchableOpacity style={styles.checkoutButton}>
+        <TouchableOpacity
+          style={styles.checkoutButton}
+          onPress={() => navigation.navigate("OrderAddressSelectionScreen" as never)}
+        >
           <Text style={styles.checkoutText}>Passer la commande</Text>
         </TouchableOpacity>
+
       </View>
     </View>
   );
