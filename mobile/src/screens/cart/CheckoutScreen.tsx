@@ -8,6 +8,7 @@ import {
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import BaseButton from "../../components/BaseButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Routes } from "../../navigation/Routes";
 
 const STRIPE_PK =
   "pk_test_51RHl0nP3G6YqBCSln3FADBnkJN9na8kiqvsczrPWePhnqWXvfyA6FE9zat0QujYCYs5xl6mLqxcXEgOoTh6xQRP000Lfjyt5Bd";
@@ -115,8 +116,7 @@ const CheckoutScreen: React.FC = () => {
         if (payError) throw new Error(payError.message);
       }
 
-      // TODO: Success Screen when payment is successful "Merci pour votre commande etc."
-      // navigation.navigate("Success");
+      navigation.navigate(Routes.OrderSuccessScreen as never);
     } catch (e: any) {
       Alert.alert("Payment Error", e.message || "Checkout failed");
     } finally {

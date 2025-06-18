@@ -5,6 +5,7 @@ import OrderAddressSelectionScreen from "../../screens/cart/OrderAddressSelectio
 import { Routes } from "../Routes";
 import { LinearGradient } from "expo-linear-gradient";
 import CheckoutScreen from "../../screens/cart/CheckoutScreen";
+import OrderSuccessScreen from "../../screens/cart/OrderSuccessScreen";
 const Stack = createNativeStackNavigator();
 
 export default function HomeStackNavigator() {
@@ -39,6 +40,11 @@ export default function HomeStackNavigator() {
         name={Routes.CheckoutScreen}
         component={CheckoutScreen}
         options={{ headerShown: true, title: "Checkout" }}
+      />
+      <Stack.Screen
+        name={Routes.OrderSuccessScreen}
+        component={OrderSuccessScreen}
+        options={{ headerShown: true, title: "Succès" }}
       />
     </Stack.Navigator>
   );

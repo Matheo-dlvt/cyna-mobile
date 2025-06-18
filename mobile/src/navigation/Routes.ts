@@ -12,6 +12,7 @@ export const SettingsScreen = "SettingsScreen";
 export const CartScreen = "CartScreen";
 export const OrderAddressSelectionScreen = "OrderAddressSelectionScreen";
 export const CheckoutScreen = "CheckoutScreen";
+export const OrderSuccessScreen = "OrderSuccessScreen";
 
 export const Routes = {
   HomeTab,
@@ -25,4 +26,5 @@ export const Routes = {
   CartScreen,
   OrderAddressSelectionScreen,
   CheckoutScreen,
+  OrderSuccessScreen,
 };
