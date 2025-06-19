@@ -45,7 +45,7 @@ const SubscriptionsScreen: React.FC = () => {
 
     try {
       const res = await fetch(
-        `http://127.0.0.1:8000/api/subscriptions/my?status=all`,
+        `http://127.0.0.1:8000/api/subscriptions/my?status=active`,
         {
           headers: { Authorization: `Bearer ${access}` },
         }
@@ -59,6 +59,7 @@ const SubscriptionsScreen: React.FC = () => {
       if (!res.ok) throw new Error("Erreur serveur");
 
       const data = await res.json();
+      console.log("data", data);
       setSubscriptions(Array.isArray(data) ? data : []);
     } catch (err) {
       Alert.alert("Erreur", "Impossible de récupérer les abonnements.");

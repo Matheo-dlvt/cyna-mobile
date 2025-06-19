@@ -9,9 +9,9 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import BaseButton from "../../components/BaseButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Routes } from "../../navigation/Routes";
+import { STRIPE_TEST_PUBLIC_KEY } from "@env";
 
-const STRIPE_PK =
-  "pk_test_51RHl0nP3G6YqBCSln3FADBnkJN9na8kiqvsczrPWePhnqWXvfyA6FE9zat0QujYCYs5xl6mLqxcXEgOoTh6xQRP000Lfjyt5Bd";
+const STRIPE_PK = STRIPE_TEST_PUBLIC_KEY;
 
 const API_ROUTES = {
   CANCEL_SETUP_INTENT: "http://127.0.0.1:8000/api/checking/cancel-setup-intent",
