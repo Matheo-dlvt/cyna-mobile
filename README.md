@@ -10,7 +10,6 @@ Elle permet de gérer un parcours utilisateur complet, de l'authentification jus
 - AsyncStorage : pour stocker les tokens localement
 - React Navigation : gestion des écrans
 - Stripe : pour les paiements (via backend)
-- Ngrok : tunnel pour exposer l'API localement lors des tests
 
 ## Fonctionnalités principales
 
@@ -36,39 +35,18 @@ En cas de token expiré, un appel à la route /api/auth/refresh/mobile est effec
 
     npm install
 
-2. Créer un fichier .env à la racine
-
-    API_BASE_URL=https://xxxxx.ngrok.io
-
-> Remplace par ton URL Ngrok en cours.
-
 3. Lancer le projet Expo
 
-    npm start
-
-> Scanne le QR code avec lapplication Expo Go sur ton téléphone ou utilise un émulateur.
+    npm run start
 
 ## Structure du projet
 
-/components          Composants UI réutilisables (BaseButton, BaseInput, etc.)
+/components          Composants UI réutilisables (BaseButton, BaseInput)
 /screens             Écrans principaux de lapplication
 /context             Contexte Auth (login/logout)
-
-## Améliorations futures
-
-- Ajout de tests unitaires
-- Gestion des cookies (auth plus sécurisée)
-- Passage à une authentification par sessions
-- Ajout de la double authentification
-- Fonctionnalités avancées pour le chatbot
 
 ## Prérequis
 
 - Node.js & npm
 - Expo CLI
-- Android Studio (si test sur émulateur)
-- Backend Cyna opérationnel (ou mocké avec Ngrok)
-
-## Auteur
-
-Projet développé par Mathéo Delvert dans le cadre du projet Cyna.
+- Backend Cyna
